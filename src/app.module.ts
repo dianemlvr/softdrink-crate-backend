@@ -8,6 +8,7 @@ import { Store } from './entities/store.entity';
 import { Delivery } from './entities/delivery.entity';
 import { CrateReturn } from './entities/crate-return.entity';
 import { PickupRequest } from './entities/pickup-request.entity';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { PickupRequest } from './entities/pickup-request.entity';
         synchronize: true,
       }),
     }),
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
