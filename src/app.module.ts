@@ -4,11 +4,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { CrateReturnsModule } from './crate-returns/crate-returns.module';
+import { DeliveriesModule } from './deliveries/deliveries.module';
 import { CrateReturn } from './entities/crate-return.entity';
 import { Delivery } from './entities/delivery.entity';
 import { PickupRequest } from './entities/pickup-request.entity';
 import { Store } from './entities/store.entity';
 import { User } from './entities/user.entity';
+import { PickupRequestsModule } from './pickup-requests/pickup-requests.module';
+import { StoresModule } from './stores/stores.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -32,6 +36,10 @@ import { UsersModule } from './users/users.module';
     }),
     UsersModule,
     AuthModule,
+    StoresModule,
+    DeliveriesModule,
+    PickupRequestsModule,
+    CrateReturnsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
