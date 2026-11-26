@@ -66,6 +66,12 @@ export class CrateReturnsService {
       throw new BadRequestException('Assigned user must have the driver role');
     }
 
+    if (createCrateReturnDto.cratesReturned > store.crateBalance) {
+      throw new BadRequestException(
+        `Returned crates (${createCrateReturnDto.cratesReturned}) cannot exceed store crate balance (${store.crateBalance})`,
+      );
+    }
+
     const crateReturn = this.crateReturnRepository.create({
       storeId: store.id,
       assignedDriverId: driver.id,
@@ -131,6 +137,7 @@ export class CrateReturnsService {
     const oldStoreId = crateReturn.storeId;
     const oldCratesReturned = crateReturn.cratesReturned;
 
+    let targetStore = crateReturn.store;
     if (updateCrateReturnDto.storeId !== undefined) {
       const store = await this.storeRepository.findOne({
         where: { id: updateCrateReturnDto.storeId },
@@ -140,6 +147,7 @@ export class CrateReturnsService {
           `Store #${updateCrateReturnDto.storeId} not found`,
         );
       }
+      targetStore = store;
       crateReturn.storeId = store.id;
     }
 
@@ -169,6 +177,17 @@ export class CrateReturnsService {
     }
     if (updateCrateReturnDto.notes !== undefined) {
       crateReturn.notes = updateCrateReturnDto.notes;
+    }
+
+    const availableBalance =
+      oldStoreId === crateReturn.storeId
+        ? targetStore.crateBalance + oldCratesReturned
+        : targetStore.crateBalance;
+
+    if (crateReturn.cratesReturned > availableBalance) {
+      throw new BadRequestException(
+        `Returned crates (${crateReturn.cratesReturned}) cannot exceed available store crate balance (${availableBalance})`,
+      );
     }
 
     const updated = await this.crateReturnRepository.save(crateReturn);
